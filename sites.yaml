@@ -25,14 +25,11 @@ Yahoo:
   要人発言: https://assets.wor.jp/rss/rdf/minkabufx/statement.rdf
   株式: https://assets.wor.jp/rss/rdf/minkabufx/stock.rdf
   商品: https://assets.wor.jp/rss/rdf/minkabufx/commodity.rdf
-ITメディア:
-  速報: https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml
+WIRED:
+  WIRED: https://wired.jp/feed/rss
 橘玲:
   ブログ: https://www.tachibana-akira.com/feed
 トーマス:
   ガジェマガ: https://2week.net/feed/
 Books:
   Apps: https://blog.tinect.jp/?feed=rss2
-
-  
-  
