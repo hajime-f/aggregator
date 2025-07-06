@@ -1,5 +1,3 @@
-# CNN:
-#   国際: https://feeds.cnn.co.jp/rss/cnn/cnn.rdf
 Yahoo:
   国内: https://news.yahoo.co.jp/rss/categories/domestic.xml
   国際: https://news.yahoo.co.jp/rss/categories/world.xml
@@ -26,6 +24,8 @@ Yahoo:
   要人発言: https://assets.wor.jp/rss/rdf/minkabufx/statement.rdf
   株式: https://assets.wor.jp/rss/rdf/minkabufx/stock.rdf
   商品: https://assets.wor.jp/rss/rdf/minkabufx/commodity.rdf
+CNN:
+  国際: https://feeds.cnn.co.jp/rss/cnn/cnn.rdf
 WIRED:
   WIRED: https://wired.jp/feed/rss
 橘玲:
