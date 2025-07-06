@@ -1,3 +1,5 @@
+CNN:
+  国際: https://feeds.cnn.co.jp/rss/cnn/cnn.rdf
 Yahoo:
   国内: https://news.yahoo.co.jp/rss/categories/domestic.xml
   国際: https://news.yahoo.co.jp/rss/categories/world.xml

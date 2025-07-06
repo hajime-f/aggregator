@@ -57,7 +57,6 @@ class Aggregator:
                 content = self.fetch_content_others(item, pub_date)
                 if content is None:
                     continue
-                breakpoint()
             elif key in ("朝日新聞"):
                 content = self.fetch_content_asahi(link)
             elif key in ("読売新聞"):
@@ -66,6 +65,8 @@ class Aggregator:
                 content = self.fetch_content_minkabu(link)
             elif key in ("WIRED"):
                 content = self.fetch_content_wired(link)
+            elif key in ("CNN"):
+                content = self.fetch_content_cnn(link)
 
             news_item = {
                 "title": title.replace("\u3000", " "),
@@ -77,6 +78,12 @@ class Aggregator:
             dict_content[key].append(news_item)
 
         return dict_content
+
+    def fetch_content_cnn(self, link):
+        content = self.request_content(link)
+        soup = BeautifulSoup(content, "html.parser")
+        content_text = soup.find("article").find("div", id="leaf-body").get_text()
+        return content_text.replace("\n", "")
 
     def fetch_content_others(self, item, pub_date):
         target_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S +0000").date()
@@ -161,10 +168,10 @@ if __name__ == "__main__":
 
     gemini = genai.GenerativeModel("gemini-1.5-flash-latest")
     prompt = f"""
-    40代の男性（高学歴・高年収・コンピュータが専門・テクノロジーに強い・兵庫県西宮市在住・音楽（特に吹奏楽）が好き・資産運用に興味がある）が日々キャッチアップしておくべき情報を、次の巨大なニュースコーパスから抜き出したいと考えています。この目的を踏まえて、下記(1)〜(5)のアクションを実行してください。
+    40代の日本人男性（コンピュータが専門・テクノロジーに強い・兵庫県西宮市在住・音楽（特に吹奏楽）が好き・資産運用に興味がある）が日々キャッチアップしておくべき情報を、次の巨大なニュースコーパスから抜き出したいと考えています。この目的を踏まえて、下記(1)〜(5)のアクションを実行してください。
     (1) この男性が読んでおくべきと考えられるコンテンツを抽出する。読んでおく必要がないと判断したコンテンツは捨てて構わない。また、日付が古い（目安として２日以上前）コンテンツも捨てて構わない。
     (2) 抽出したコンテンツを横断的に分析し、類似のコンテンツを統合した上で要約する。ただし、統合・要約した元のコンテンツが特定できるように、タイトルとURLを対応づけておく。
-    (3) 30個以下のトピックに対して上記要約を準備する。ただし、これらのトピックは互いに重複がないようにすること。また、各トピックの要約は、400〜600文字程度とすること。
+    (3) 30個以下のトピックに対して上記要約を準備する。ただし、これらのトピックは互いに重複がないようにすること。また、各トピックの要約は、200〜400文字程度とすること。
     (4) 準備した要約をEmacsのorg-modeで表示しやすい形式にフォーマットする。ただし、適宜改行を入れるなどの処理を行って、男性が読みやすいように工夫すること。
     (5) Pythonで処理しやすいように、JSON形式でレスポンスを返す。ただし、レスポンスにはMarkdownのコードブロックなどの余計な文字列を含めず、単純なJSONテキストのみが含まれるようにする（Pythonで読み込んでリスト型・辞書型に変換するため）。
     {dict_content}
@@ -172,9 +179,6 @@ if __name__ == "__main__":
     response_text = gemini.generate_content(prompt).text
     breakpoint()
     response_text = json.load(response_text)
-
-    with open("test.json", "rt") as f:
-        response_text = json.load(f)
 
     org_text = ""
     for content in response_text:
