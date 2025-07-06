@@ -3,7 +3,7 @@ import json
 import os
 import time
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import google.generativeai as genai
 import yaml
@@ -53,10 +53,11 @@ class Aggregator:
 
             if key in ("Yahoo"):
                 content = self.fetch_content_yahoo(link)
-            elif key in ("橘玲", "トーマス", "Books"):
-                content = self.fetch_content_others(item)
+            elif key in ("橘玲", "トーマス", "Books", "パレオ"):
+                content = self.fetch_content_others(item, pub_date)
                 if content is None:
                     continue
+                breakpoint()
             elif key in ("朝日新聞"):
                 content = self.fetch_content_asahi(link)
             elif key in ("読売新聞"):
@@ -71,18 +72,23 @@ class Aggregator:
                 "link": link,
                 "pubDate": pub_date,
                 "content": content,
+                "source": key,
             }
             dict_content[key].append(news_item)
 
         return dict_content
 
-    def fetch_content_others(self, item):
-        pub_date = item.find("dc:date").get_text()
-        dt_object = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S +0000")
-        is_today = dt_object.date() == datetime.now().date()
+    def fetch_content_others(self, item, pub_date):
+        target_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S +0000").date()
+        today = datetime.now().date()
+        limit_date = today - timedelta(days=1)
+        is_today = limit_date <= target_date <= today
 
         if is_today:
-            html_inside = item.find("content:encoded").text
+            try:
+                html_inside = item.find("content:encoded").text
+            except AttributeError:
+                html_inside = item.find("description").text
             inner_soup = BeautifulSoup(html.unescape(html_inside), "html.parser")
             plain_text = inner_soup.get_text(separator="\n", strip=True)
             content = plain_text.replace("\n", "").replace("\u3000", " ")
@@ -176,5 +182,8 @@ if __name__ == "__main__":
         for article in content["articles"]:
             org_text += f"  - [[{article['url']}][{article['title']}]]\n"
 
-    with open("test_output.org", "w") as f:
+    attr = datetime.now().date().strftime("%Y-%m-%d")
+    file_name = f"./news/{attr}_本日のニュース.org"
+
+    with open(file_name, "w") as f:
         f.write(org_text)
