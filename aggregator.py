@@ -39,7 +39,6 @@ class Aggregator:
                 items = soup.find_all("item")
                 dict_content = self.process_items(items, dict_content, key)
 
-        breakpoint()
         return dict_content
 
     def process_items(self, items, dict_content, key):
@@ -134,25 +133,35 @@ class Aggregator:
 
 
 if __name__ == "__main__":
-    agg = Aggregator()
+    # agg = Aggregator()
 
-    dict_sites = agg.fetch_sites()
-    dict_content = agg.make_content(dict_sites)
+    # dict_sites = agg.fetch_sites()
+    # dict_content = agg.make_content(dict_sites)
 
-    breakpoint()
+    # breakpoint()
 
-    gemini = genai.GenerativeModel("gemini-1.5-flash-latest")
-    prompt = f"""
-    40代の男性（高学歴・高年収・コンピュータが専門・テクノロジーに強い・兵庫県西宮市在住・音楽（特に吹奏楽）が好き・資産運用に興味がある）が日々キャッチアップしておくべき情報を、次の巨大なニュースコーパスから抜き出したいと考えています。
-    この目的を踏まえて、下記(1)〜(5)のアクションを実行してください。
-    (1) この男性が読んでおくべきと考えられるコンテンツを抽出する。読んでおく必要がないと判断したコンテンツは捨てて構わない。また、日付が古い（目安として２日以上前）コンテンツも捨てて構わない。
-    (2) 抽出したコンテンツを横断的に分析し、類似のコンテンツを統合した上で要約する。ただし、統合・要約した元のコンテンツが特定できるように、タイトルとURLを対応づけておく。
-    (3) 30個以下のトピックに対して上記要約を準備する。ただし、これらのトピックは互いに重複がないようにする。
-    (4) 準備した要約をEmacsのorg-modeで表示しやすい形式にフォーマットする。ただし、適宜改行を入れるなどの処理を行って、男性が読みやすいように工夫すること。
-    (5) Pythonで処理しやすいように、JSON形式でレスポンスを返す。ただし、レスポンスにはMarkdownのコードブロックなどの余計な文字列を含めず、単純なJSONテキストのみが含まれるようにする（Pythonで読み込んでリスト型・辞書型に変換するため）。
-    {dict_content}
-    """
-    response = gemini.generate_content(prompt)
-    print(response.text)
+    # gemini = genai.GenerativeModel("gemini-1.5-flash-latest")
+    # prompt = f"""
+    # 40代の男性（高学歴・高年収・コンピュータが専門・テクノロジーに強い・兵庫県西宮市在住・音楽（特に吹奏楽）が好き・資産運用に興味がある）が日々キャッチアップしておくべき情報を、次の巨大なニュースコーパスから抜き出したいと考えています。この目的を踏まえて、下記(1)〜(5)のアクションを実行してください。
+    # (1) この男性が読んでおくべきと考えられるコンテンツを抽出する。読んでおく必要がないと判断したコンテンツは捨てて構わない。また、日付が古い（目安として２日以上前）コンテンツも捨てて構わない。
+    # (2) 抽出したコンテンツを横断的に分析し、類似のコンテンツを統合した上で要約する。ただし、統合・要約した元のコンテンツが特定できるように、タイトルとURLを対応づけておく。
+    # (3) 30個以下のトピックに対して上記要約を準備する。ただし、これらのトピックは互いに重複がないようにする。
+    # (4) 準備した要約をEmacsのorg-modeで表示しやすい形式にフォーマットする。ただし、適宜改行を入れるなどの処理を行って、男性が読みやすいように工夫すること。
+    # (5) Pythonで処理しやすいように、JSON形式でレスポンスを返す。ただし、レスポンスにはMarkdownのコードブロックなどの余計な文字列を含めず、単純なJSONテキストのみが含まれるようにする（Pythonで読み込んでリスト型・辞書型に変換するため）。
+    # {dict_content}
+    # """
+    # response_text = gemini.generate_content(prompt).text
+    # breakpoint()
+    # response_text = json.load(response_text)
 
-    breakpoint()
+    with open("test.json", "rt") as f:
+        response_text = json.load(f)
+
+    org_text = ""
+    for content in response_text:
+        org_text += f"* {content['topic']}\n- {content['summary']}\n"
+        for article in content["articles"]:
+            org_text += f"  - [[{article['url']}][{article['title']}]]\n"
+
+    with open("test_output.org", "w") as f:
+        f.write(org_text)
