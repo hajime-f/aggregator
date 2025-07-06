@@ -159,17 +159,14 @@ class Aggregator:
 if __name__ == "__main__":
     agg = Aggregator()
 
-    # dict_sites = agg.fetch_sites()
-    # dict_content = agg.make_content(dict_sites)
+    dict_sites = agg.fetch_sites()
+    dict_content = agg.make_content(dict_sites)
 
     # json_content = json.dumps(dict_content, ensure_ascii=False)
     # with open("test.json", "w") as f:
     #     f.write(json_content)
-    with open("test.json", "r") as f:
-        dict_content = json.load(f)
-
-    with open("format.txt", "r") as f:
-        format_text = f.read()
+    # with open("test.json", "r") as f:
+    #     dict_content = json.load(f)
 
     gemini = genai.GenerativeModel("gemini-1.5-flash-latest")
     prompt = f"""
@@ -182,10 +179,13 @@ if __name__ == "__main__":
     """
     response_text = gemini.generate_content(prompt).text
 
+    with open("format.txt", "r") as f:
+        format_text = f.read()
+
     prompt = f"""
-    下記のテキストを次のフォーマットに則って整形してください。レスポンスにはMarkdownのコードブロックなどの余計な文字列を含めないでください。
-    {response_text}
+    次のフォーマットに則って下記のテキストを整形してください。レスポンスにはMarkdownのコードブロックなどの余計な文字列を含めないでください。
     {format_text}
+    {response_text}
     """
     response_text2 = gemini.generate_content(prompt).text
 
