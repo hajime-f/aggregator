@@ -1,5 +1,5 @@
-CNN:
-  国際: https://feeds.cnn.co.jp/rss/cnn/cnn.rdf
+# CNN:
+#   国際: https://feeds.cnn.co.jp/rss/cnn/cnn.rdf
 Yahoo:
   国内: https://news.yahoo.co.jp/rss/categories/domestic.xml
   国際: https://news.yahoo.co.jp/rss/categories/world.xml
@@ -7,7 +7,6 @@ Yahoo:
   IT: https://news.yahoo.co.jp/rss/categories/it.xml
   科学: https://news.yahoo.co.jp/rss/categories/science.xml
 朝日新聞:
-  速報: https://www.asahi.com/rss/asahi/newsheadlines.rdf
   社会: https://www.asahi.com/rss/asahi/national.rdf
   政治: https://www.asahi.com/rss/asahi/politics.rdf
   経済: https://www.asahi.com/rss/asahi/business.rdf
